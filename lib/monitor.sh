@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 #
-# lib/monitor.sh — Monitoreo continuo: métricas de CPU y memoria desde /proc,
-# análisis del log del servidor y bloqueo automático de IPs. Corre como root
-# porque ejecuta nft sobre el conjunto blocked_ips del cortafuegos.
+# lib/monitor.sh — Métricas de /proc, análisis del log y bloqueo de IPs.
+# Corre como root porque ejecuta nft.
 
 
 set -euo pipefail
@@ -104,11 +103,9 @@ iniciar_parser() {
     rm -f "$FIFO_EVENTOS"
     mkfifo "$FIFO_EVENTOS"
 
-    # -n +1 reproduce el log de la sesión actual para recuperar el número de
-    # jugadores ya conectados.
-    # 9>&- cierra el descriptor del cerrojo en los hijos: si quedaran huérfanos
-    # lo retendrían e impedirían reiniciar el monitor.
-    tail -F -n +1 "$SERVER_LOG_FILE" > "$FIFO_EVENTOS" 2>/dev/null 9>&- &
+    # -n 0 lee solo lo nuevo: releer el histórico lo contaría como actual
+    # 9>&- libera el cerrojo en los hijos por si quedan huérfanos
+    tail -F -n 0 "$SERVER_LOG_FILE" > "$FIFO_EVENTOS" 2>/dev/null 9>&- &
     PID_TAIL=$!
 
     while IFS= read -r linea; do
@@ -164,8 +161,7 @@ ip_ya_bloqueada() {
 bloquear_ip() {
     local ip="$1" motivo="${2:-manual}"
 
-    # Solo se protege 127.0.0.1: el resto de 127.0.0.0/8 lo usan los túneles
-    # para representar clientes remotos y sí debe poder bloquearse.
+    # El resto de 127.0.0.0/8 lo usan los túneles y sí debe poder bloquearse.
     if [[ "$ip" == "127.0.0.1" ]]; then
         log_warn "se omite el bloqueo de ${ip}: es el loopback del propio host"
         return 0
@@ -223,8 +219,7 @@ pid_servidor() {
     printf '%s\n' "${pid:-0}"
 }
 
-# Calcula el uso de CPU de toda la máquina y lo deja en CPU_X10, en décimas
-# de porcentaje.
+# Calcula el uso de CPU de toda la máquina y lo deja en CPU_X10.
 cpu_del_sistema() {
     local -a campos
     local valor total inactivo delta_total delta_inactivo

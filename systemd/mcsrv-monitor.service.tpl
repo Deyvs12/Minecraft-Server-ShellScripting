@@ -1,8 +1,5 @@
-# Plantilla de la unit del monitor. deploy sustituye los marcadores __XXX__
-# y la instala en /etc/systemd/system/mcsrv-monitor.service.
-#
-# Corre como root porque ejecuta `nft` para añadir elementos al conjunto
-# blocked_ips del cortafuegos y lee /proc del proceso del servidor.
+# Plantilla de la unit del monitor. deploy sustituye los marcadores __XXX__.
+# Corre como root porque ejecuta nft.
 
 [Unit]
 Description=Monitor de mcsrv para el servidor de Minecraft

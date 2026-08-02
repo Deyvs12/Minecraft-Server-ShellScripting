@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 #
-# lib/common.sh — Registro de eventos, verificación de privilegios y carga de
-# la configuración. Se carga con `source` desde mcsrv.sh.
+# lib/common.sh — Registro de eventos, privilegios y carga de configuración.
 
 set -euo pipefail
 
@@ -201,7 +200,6 @@ load_config() {
     validar_obligatorias "$ruta"
     validar_valores
 
-    # Ruta efectiva del config, que harden.sh escribe en la unit del monitor.
     # shellcheck disable=SC2034
     MCSRV_CONF_ACTIVO="$ruta"
 

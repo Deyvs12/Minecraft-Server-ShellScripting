@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 #
-# lib/harden.sh — Despliegue y endurecimiento del host: usuario sin
-# privilegios, nftables, unit de systemd, sitio de nginx y verificación con
-# nmap. Todas las funciones son idempotentes.
+# lib/harden.sh — Despliegue: usuario, nftables, systemd, nginx y verificación.
 
 set -euo pipefail
 
@@ -138,9 +136,7 @@ table inet mcsrv {
     chain input {
         type filter hook input priority filter; policy drop;
 
-        # El bloqueo se evalúa primero para que tenga efecto inmediato, incluso
-        # sobre conexiones ya establecidas y sobre el tráfico de loopback que
-        # entregan los túneles.
+        ip saddr @blocked_ips meta l4proto tcp reject with tcp reset
         ip saddr @blocked_ips drop
 
         ct state established,related accept
@@ -231,6 +227,24 @@ instalar_unit_monitor() {
     rm -f "$temporal"
     systemctl daemon-reload
     log_ok "mcsrv-monitor.service instalado en ${destino}"
+}
+
+# Punto de entrada del comando stop: detiene el monitor y el servidor.
+mcsrv_stop() {
+    if systemctl is-active --quiet mcsrv-monitor.service; then
+        systemctl stop mcsrv-monitor.service
+        log_ok "monitor detenido"
+    else
+        log_info "el monitor ya estaba detenido"
+    fi
+
+    if systemctl is-active --quiet minecraft.service; then
+        log_info "guardando el mundo y deteniendo el servidor..."
+        systemctl stop minecraft.service
+        log_ok "servidor detenido"
+    else
+        log_info "el servidor ya estaba detenido"
+    fi
 }
 
 # Habilita y arranca el servicio del monitor.
@@ -380,8 +394,7 @@ verificar_puertos_expuestos() {
         fi
     done <<<"$abiertos"
 
-    # El escaneo sale del propio host y viaja por lo, así que comprueba qué
-    # escucha, no qué filtra el cortafuegos.
+    # El escaneo sale del propio host: comprueba qué escucha, no qué filtra.
     log_warn "escaneo local: para validar el filtrado, escanea desde otra máquina con 'nmap -Pn -p- ${ip}'"
 
     [[ "$fallo" == "no" ]]

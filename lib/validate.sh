@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 #
-# lib/validate.sh — Validaciones previas al despliegue: versión de Java,
-# memoria disponible, integridad del jar y puerto libre.
+# lib/validate.sh — Validaciones previas: Java, memoria, integridad y puerto.
 
 set -euo pipefail
 

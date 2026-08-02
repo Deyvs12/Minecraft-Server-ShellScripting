@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 #
-# mcsrv.sh — Punto de entrada. Procesa las opciones, carga las librerías de
-# lib/ y despacha al módulo correspondiente.
-#
-# Uso: mcsrv.sh [-c ARCHIVO] <comando> [argumentos]
+# mcsrv.sh — Punto de entrada. Carga las librerías y despacha el comando.
 
 set -euo pipefail
 
@@ -45,6 +42,7 @@ Comandos:
   deploy                 Valida el entorno, endurece el host y arranca el
                          servidor. Requiere root.
   monitor                Métricas y análisis del log en bucle. Requiere root.
+  stop                   Detiene el monitor y el servidor. Requiere root.
   status                 Resumen en consola del estado del servidor.
   report                 Regenera el reporte HTML.
   block <IP>             Bloquea una IP en nftables. Requiere root.
@@ -102,6 +100,12 @@ case "$MCSRV_COMANDO" in
         require_root
         load_config "$RUTA_CONFIG"
         mcsrv_monitor
+        ;;
+
+    stop)
+        require_root
+        load_config "$RUTA_CONFIG"
+        mcsrv_stop
         ;;
 
     block)
