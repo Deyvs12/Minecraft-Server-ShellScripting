@@ -201,10 +201,21 @@ load_config() {
     validar_obligatorias "$ruta"
     validar_valores
 
+    # Ruta efectiva del config, que harden.sh escribe en la unit del monitor.
+    # shellcheck disable=SC2034
+    MCSRV_CONF_ACTIVO="$ruta"
+
     : "${SERVER_DIR:=/opt/minecraft}"
     : "${SERVER_USER:=mcserver}"
     : "${STATE_DIR:=/var/lib/mcsrv}"
     : "${REPORT_DIR:=${STATE_DIR}/report}"
+    : "${SERVER_LOG_FILE:=${SERVER_DIR}/logs/latest.log}"
+    : "${REPORT_FILE:=${REPORT_DIR}/index.html}"
+    : "${EVENTOS_FILE:=${STATE_DIR}/eventos.log}"
+    : "${PLAYERS_FILE:=${STATE_DIR}/players}"
+    : "${BLOCKED_LIST_FILE:=${STATE_DIR}/blocked.list}"
+    : "${FIFO_EVENTOS:=${STATE_DIR}/eventos.fifo}"
+    : "${LOCK_FILE:=${STATE_DIR}/monitor.lock}"
 
     log_info "configuración cargada desde ${ruta}"
 }

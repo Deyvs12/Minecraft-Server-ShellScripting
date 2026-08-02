@@ -24,8 +24,10 @@ mcsrv_deploy() {
     crear_usuario_servidor
     configurar_nftables
     instalar_unit_minecraft
+    instalar_unit_monitor
     configurar_nginx
     activar_servicio_minecraft
+    activar_servicio_monitor
 
     log_info "--- Verificación ---"
     if ! verificar_puertos_expuestos; then
@@ -136,12 +138,15 @@ table inet mcsrv {
     chain input {
         type filter hook input priority filter; policy drop;
 
+        # El bloqueo se evalúa primero para que tenga efecto inmediato, incluso
+        # sobre conexiones ya establecidas y sobre el tráfico de loopback que
+        # entregan los túneles.
+        ip saddr @blocked_ips drop
+
         ct state established,related accept
         ct state invalid drop
 
         iif lo accept
-
-        ip saddr @blocked_ips drop
 
         tcp dport ${puerto_ssh} accept
         tcp dport ${SERVER_PORT} accept
@@ -201,6 +206,45 @@ instalar_unit_minecraft() {
     rm -f "$temporal"
     systemctl daemon-reload
     log_ok "minecraft.service instalado en ${destino}"
+}
+
+# Genera mcsrv-monitor.service desde la plantilla y lo instala si cambió.
+instalar_unit_monitor() {
+    local plantilla="${MCSRV_ROOT}/systemd/mcsrv-monitor.service.tpl"
+    local destino="/etc/systemd/system/mcsrv-monitor.service"
+    local temporal
+
+    [[ -f "$plantilla" ]] || die "no se encontró la plantilla ${plantilla}"
+
+    temporal="$(mktemp)"
+    sed -e "s|__MCSRV_ROOT__|${MCSRV_ROOT}|g" \
+        -e "s|__CONFIG__|${MCSRV_CONF_ACTIVO}|g" \
+        "$plantilla" > "$temporal"
+
+    if [[ -f "$destino" ]] && cmp -s "$temporal" "$destino"; then
+        rm -f "$temporal"
+        log_info "mcsrv-monitor.service ya está al día"
+        return 0
+    fi
+
+    install -m 644 "$temporal" "$destino"
+    rm -f "$temporal"
+    systemctl daemon-reload
+    log_ok "mcsrv-monitor.service instalado en ${destino}"
+}
+
+# Habilita y arranca el servicio del monitor.
+activar_servicio_monitor() {
+    systemctl enable mcsrv-monitor.service >/dev/null 2>&1 ||
+        die "no se pudo habilitar mcsrv-monitor.service"
+
+    systemctl restart mcsrv-monitor.service
+
+    if systemctl is-active --quiet mcsrv-monitor.service; then
+        log_ok "mcsrv-monitor.service en marcha"
+    else
+        log_warn "mcsrv-monitor.service no quedó activo; revisa: journalctl -u mcsrv-monitor -n 30"
+    fi
 }
 
 # Deja eula.txt en true; el servidor no arranca sin eso.

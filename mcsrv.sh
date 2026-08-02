@@ -17,6 +17,22 @@ source "${MCSRV_ROOT}/lib/common.sh"
 source "${MCSRV_ROOT}/lib/validate.sh"
 # shellcheck source=lib/harden.sh
 source "${MCSRV_ROOT}/lib/harden.sh"
+# shellcheck source=lib/monitor.sh
+source "${MCSRV_ROOT}/lib/monitor.sh"
+# shellcheck source=lib/report.sh
+source "${MCSRV_ROOT}/lib/report.sh"
+# shellcheck source=lib/status.sh
+source "${MCSRV_ROOT}/lib/status.sh"
+
+# Valida que se recibió exactamente una IPv4 y la deja en IP_OBJETIVO.
+exigir_argumento_ip() {
+    local comando="$1"
+    shift
+
+    (( $# == 1 )) || die "uso: $0 ${comando} <IP>"
+    es_ipv4 "$1" || die "'$1' no es una dirección IPv4 válida"
+    IP_OBJETIVO="$1"
+}
 
 # Imprime la ayuda de uso de la herramienta.
 mostrar_uso() {
@@ -85,29 +101,32 @@ case "$MCSRV_COMANDO" in
     monitor)
         require_root
         load_config "$RUTA_CONFIG"
-        die "'monitor' se implementa en la Fase 2"      # Fase 2: mcsrv_monitor "$@"
+        mcsrv_monitor
         ;;
 
     block)
         require_root
         load_config "$RUTA_CONFIG"
-        die "'block' se implementa en la Fase 2"        # Fase 2: mcsrv_block "$@"
+        exigir_argumento_ip "block" "$@"
+        mcsrv_block "$IP_OBJETIVO"
         ;;
 
     unblock)
         require_root
         load_config "$RUTA_CONFIG"
-        die "'unblock' se implementa en la Fase 2"      # Fase 2: mcsrv_unblock "$@"
+        exigir_argumento_ip "unblock" "$@"
+        mcsrv_unblock "$IP_OBJETIVO"
         ;;
 
     status)
         load_config "$RUTA_CONFIG"
-        die "'status' se implementa en la Fase 3"       # Fase 3: mcsrv_status "$@"
+        mcsrv_status
         ;;
 
     report)
+        require_root
         load_config "$RUTA_CONFIG"
-        die "'report' se implementa en la Fase 3"       # Fase 3: mcsrv_report "$@"
+        mcsrv_report
         ;;
 
     help)
