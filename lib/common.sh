@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# lib/common.sh — Registro de eventos, privilegios y carga de configuración.
+# Registro de eventos, privilegios y carga de configuración.
 
 set -euo pipefail
 

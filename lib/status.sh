@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# lib/status.sh — Resumen del estado en consola. 
+# Resumen del estado en consola.
 
 set -euo pipefail
 
@@ -50,7 +50,7 @@ mcsrv_status() {
     pid="$(pid_servidor)"
     ip="$(ip_del_host)"
 
-    printf '\nmcsrv — estado\n\n'
+    printf '\nmcsrv - estado\n\n'
 
     if (( pid > 0 )); then
         rss_kb="$(memoria_rss_kb "$pid")"

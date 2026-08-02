@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# mcsrv.sh — Punto de entrada. Carga las librerías y despacha el comando.
+# Punto de entrada. Carga las librerías y despacha el comando.
 
 set -euo pipefail
 
@@ -34,7 +34,7 @@ exigir_argumento_ip() {
 # Imprime la ayuda de uso de la herramienta.
 mostrar_uso() {
     cat <<'AYUDA'
-mcsrv — despliegue seguro y monitoreo de servidores Minecraft Java Edition
+mcsrv - despliegue seguro y monitoreo de servidores Minecraft Java Edition
 
 Uso: mcsrv.sh [-c ARCHIVO] <comando> [argumentos]
 

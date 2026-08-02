@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# lib/validate.sh — Validaciones previas: Java, memoria, integridad y puerto.
+# Validaciones previas: Java, memoria, integridad y puerto.
 
 set -euo pipefail
 

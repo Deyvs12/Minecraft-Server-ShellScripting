@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# lib/monitor.sh — Métricas de /proc, análisis del log y bloqueo de IPs.
+# Métricas de /proc, análisis del log y bloqueo de IPs.
 # Corre como root porque ejecuta nft.
 
 

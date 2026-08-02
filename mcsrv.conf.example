@@ -1,5 +1,5 @@
 # =============================================================================
-# mcsrv.conf — configuración de mcsrv
+# configuración de mcsrv
 #
 # deploy crea en /etc/mcsrv/mcsrv.conf la primera vez.
 # =============================================================================

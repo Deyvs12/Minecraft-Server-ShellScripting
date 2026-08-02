@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# lib/report.sh — Generación del reporte HTML estático que sirve nginx.
+# Generación del reporte HTML estático que sirve nginx.
 
 set -euo pipefail
 
@@ -82,7 +82,7 @@ generar_reporte() {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="refresh" content="${MONITOR_INTERVAL}">
-<title>mcsrv — estado del servidor</title>
+<title>mcsrv - estado del servidor</title>
 <style>
 body { font-family: system-ui, sans-serif; margin: 0; padding: 1.5rem;
        background: #14161a; color: #e6e8eb; }
@@ -109,7 +109,7 @@ footer { margin-top: 2rem; color: #8b929c; font-size: .75rem; }
 </head>
 <body>
 
-<h1>mcsrv — estado del servidor</h1>
+<h1>mcsrv - estado del servidor</h1>
 <p class="sub">Generado el $(date -Iseconds) · se actualiza cada ${MONITOR_INTERVAL} s</p>
 
 <div class="tarjetas">

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# lib/harden.sh — Despliegue: usuario, nftables, systemd, nginx y verificación.
+# Despliegue: usuario, nftables, systemd, nginx y verificación.
 
 set -euo pipefail
 
