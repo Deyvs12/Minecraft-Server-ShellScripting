@@ -125,6 +125,7 @@ detener_monitor() {
         kill "$PID_PARSER" 2>/dev/null || true
     fi
     rm -f "$FIFO_EVENTOS"
+    retirar_reporte
     log_info "monitor detenido"
 }
 

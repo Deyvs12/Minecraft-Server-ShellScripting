@@ -159,7 +159,12 @@ HTML
     mv "$temporal" "$REPORT_FILE"
 }
 
-# Punto de entrada del comando report: genera el HTML una sola vez.
+# Borra el reporte al detener el monitor
+retirar_reporte() {
+    rm -f "$REPORT_FILE"
+}
+
+# Punto de entrada del comando report: genera el HTML una sola vez
 mcsrv_report() {
     local pid mem_x10 rss_kb uptime_s
 

@@ -245,6 +245,9 @@ mcsrv_stop() {
     else
         log_info "el servidor ya estaba detenido"
     fi
+
+    retirar_reporte
+    log_ok "reporte retirado; nginx ya no publica nada"
 }
 
 # Habilita y arranca el servicio del monitor.
