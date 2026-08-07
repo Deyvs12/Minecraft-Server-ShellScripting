@@ -272,7 +272,7 @@ memoria_del_proceso() {
     local rss limite
 
     rss="$(memoria_rss_kb "$1")"
-    limite="$(jvm_xmx_kb)"
+    limite="$(jvm_xmx_kb)" # memoria limite en kb
 
     (( limite > 0 )) || { printf '0\n'; return 0; }
     printf '%s\n' "$(( rss * 1000 / limite ))"

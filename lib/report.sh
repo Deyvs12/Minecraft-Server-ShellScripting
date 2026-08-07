@@ -164,27 +164,3 @@ retirar_reporte() {
     rm -f "$REPORT_FILE"
 }
 
-# Punto de entrada del comando report: genera el HTML una sola vez
-mcsrv_report() {
-    local pid mem_x10 rss_kb uptime_s
-
-    mkdir -p "$REPORT_DIR"
-    [[ -f "$EVENTOS_FILE" ]] || : > "$EVENTOS_FILE"
-    [[ -f "$PLAYERS_FILE" ]] || printf '0\n' > "$PLAYERS_FILE"
-    [[ -f "$BLOCKED_LIST_FILE" ]] || : > "$BLOCKED_LIST_FILE"
-
-    pid="$(pid_servidor)"
-    mem_x10=0
-    rss_kb=0
-    uptime_s=0
-
-    if (( pid > 0 )); then
-        rss_kb="$(memoria_rss_kb "$pid")"
-        mem_x10="$(memoria_del_proceso "$pid")"
-        uptime_s="$(uptime_del_proceso "$pid")"
-    fi
-
-    # Sin ciclo previo no hay diferencia de jiffies, así que la CPU sale en 0.
-    generar_reporte 0 "$mem_x10" "$rss_kb" "$(leer_jugadores)" "$uptime_s" "$pid"
-    log_ok "reporte generado en ${REPORT_FILE}"
-}
