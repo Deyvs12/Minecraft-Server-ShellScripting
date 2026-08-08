@@ -20,10 +20,10 @@ estado_unit() {
 
 # Devuelve el número de IPs bloqueadas, o un aviso si no se puede leer.
 conteo_bloqueadas() {
-    if [[ -r "$BLOCKED_LIST_FILE" ]]; then
+    if [[ -s "$BLOCKED_LIST_FILE" ]]; then
         wc -l < "$BLOCKED_LIST_FILE"
     else
-        printf '(requiere root)\n'
+        printf '0\n'
     fi
 }
 
@@ -31,10 +31,10 @@ conteo_bloqueadas() {
 conteo_jugadores() {
     local n
 
-    if [[ -r "$PLAYERS_FILE" ]] && read -r n < "$PLAYERS_FILE"; then
+    if read -r n < "$PLAYERS_FILE" 2>/dev/null; then
         printf '%s\n' "$n"
     else
-        printf '(requiere root)\n'
+        printf '0\n'
     fi
 }
 

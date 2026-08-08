@@ -43,7 +43,7 @@ Comandos:
                          servidor. Requiere root.
   monitor                Métricas y análisis del log en bucle. Requiere root.
   stop                   Detiene el monitor y el servidor. Requiere root.
-  status                 Resumen en consola del estado del servidor.
+  status                 Resumen en consola del estado. Requiere root.
   block <IP>             Bloquea una IP en nftables. Requiere root.
   unblock <IP>           Desbloquea una IP. Requiere root.
   help                   Muestra esta ayuda.
@@ -122,6 +122,7 @@ case "$MCSRV_COMANDO" in
         ;;
 
     status)
+        require_root
         load_config "$RUTA_CONFIG"
         mcsrv_status
         ;;
